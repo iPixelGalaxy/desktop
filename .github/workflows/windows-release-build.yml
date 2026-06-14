@@ -215,6 +215,15 @@ jobs:
           SURFER_CERT_PATCH_NAME: ${{ secrets.SURFER_CERT_PATCH_NAME }}
         run: |
           . "$HOME/.cargo/env"
+          obj_backup="$(mktemp -d)"
+          if compgen -G "engine/obj-*" > /dev/null; then
+            mv engine/obj-* "$obj_backup"/
+          fi
+          npm run download -- --force
+          if compgen -G "$obj_backup/obj-*" > /dev/null; then
+            mv "$obj_backup"/obj-* engine/
+          fi
+          rmdir "$obj_backup" || true
           python3 - <<'PY'
           from pathlib import Path
 
