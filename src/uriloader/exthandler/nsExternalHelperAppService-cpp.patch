@@ -12,6 +12,7 @@ diff --git a/uriloader/exthandler/nsExternalHelperAppService.cpp b/uriloader/ext
 @@ -406,6 +406,29 @@ static Result<nsCOMPtr<nsIFile>, nsresult> GetInitialDownloadDirectory(
  #endif
  }
+ 
 +static bool UseZenDownloadsStaging() {
 +  return Preferences::GetBool("zen.downloads.staging.enabled", false);
 +}
@@ -51,6 +52,7 @@ diff --git a/uriloader/exthandler/nsExternalHelperAppService.cpp b/uriloader/ext
 +    return res.unwrapErr();
 +  }
 +
+   mTempFile = res.unwrap();
 @@ -2578,7 +2605,8 @@ nsresult nsExternalAppHandler::ContinueSave(nsIFile* aNewFileLocation) {
    // to it, to indicate that it's unfinished.  Do not call SetTarget on the
    // saver if we are done (Finish has been called) but OnSaverComplete has
