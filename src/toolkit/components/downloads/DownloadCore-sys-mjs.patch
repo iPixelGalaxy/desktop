@@ -1,10 +1,10 @@
 diff --git a/toolkit/components/downloads/DownloadCore.sys.mjs b/toolkit/components/downloads/DownloadCore.sys.mjs
 --- a/toolkit/components/downloads/DownloadCore.sys.mjs
 +++ b/toolkit/components/downloads/DownloadCore.sys.mjs
-@@ -86,6 +86,19 @@ function isString(aValue) {
-   return typeof aValue == "string" || aValue instanceof String;
+@@ -118,6 +118,19 @@ async function isPlaceholder(path) {
+   return false;
  }
- 
+
 +/**
 + * Moves a completed part file into place. If the staged part file is on a
 + * different filesystem than the final target, fall back to copy and remove.
