@@ -40,6 +40,7 @@ jobs:
     steps:
       - name: Free Disk Space (Ubuntu)
         uses: jlumbroso/free-disk-space@main
+        if: ${{ runner.environment == 'github-hosted' }}
         with:
           tool-cache: false
 
@@ -47,7 +48,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.DEPLOY_KEY }}
+          token: ${{ secrets.DEPLOY_KEY || github.token }}
+          clean: ${{ runner.environment == 'github-hosted' }}
 
       - name: Setup Node.js
         uses: useblacksmith/setup-node@v5

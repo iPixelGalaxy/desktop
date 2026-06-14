@@ -1,0 +1,50 @@
+diff --git a/toolkit/components/downloads/DownloadCore.sys.mjs b/toolkit/components/downloads/DownloadCore.sys.mjs
+--- a/toolkit/components/downloads/DownloadCore.sys.mjs
++++ b/toolkit/components/downloads/DownloadCore.sys.mjs
+@@ -86,6 +86,19 @@ function isString(aValue) {
+   return typeof aValue == "string" || aValue instanceof String;
+ }
+ 
++/**
++ * Moves a completed part file into place. If the staged part file is on a
++ * different filesystem than the final target, fall back to copy and remove.
++ */
++async function moveOrCopyPartFileToTarget(sourcePath, targetPath) {
++  try {
++    await IOUtils.move(sourcePath, targetPath);
++  } catch (ex) {
++    await IOUtils.copy(sourcePath, targetPath);
++    await IOUtils.remove(sourcePath, { ignoreAbsent: true });
++  }
++}
++
+ /**
+  * This determines the minimum time interval between updates to the number of
+  * bytes transferred, and is a limiting factor to the sequence of readings used
+@@ -782,7 +796,7 @@ Download.prototype = {
+     this._promiseUnblock = (async () => {
+       try {
+         if (this.target.partFilePath) {
+-          await IOUtils.move(this.target.partFilePath, this.target.path);
++          await moveOrCopyPartFileToTarget(this.target.partFilePath, this.target.path);
+         }
+         await this.target.refresh();
+       } catch (ex) {
+@@ -2886,7 +2900,7 @@ DownloadCopySaver.prototype = {
+ 
+     if (partFilePath) {
+       try {
+-        await IOUtils.move(partFilePath, targetPath);
++        await moveOrCopyPartFileToTarget(partFilePath, targetPath);
+       } catch (e) {
+         if (e.name === "NotAllowedError") {
+           // In case we cannot write to the target file
+@@ -2894,7 +2908,7 @@ DownloadCopySaver.prototype = {
+           let uniquePath = lazy.DownloadPaths.createNiceUniqueFile(
+             new lazy.FileUtils.File(targetPath)
+           ).path;
+-          await IOUtils.move(partFilePath, uniquePath);
++          await moveOrCopyPartFileToTarget(partFilePath, uniquePath);
+           this.download.target.path = uniquePath;
+         } else {
+           throw e;

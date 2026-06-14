@@ -3,15 +3,15 @@
 set -xe
 
 if command -v apt-get &> /dev/null; then
-  sudo apt-get install python3-launchpadlib
+  sudo apt-get install -y python3-launchpadlib
   sudo apt-get update
   sudo apt-get install -y xvfb libnvidia-egl-wayland1 mesa-utils libgl1-mesa-dri
 fi
 
 mkdir -p ~/.zen-keys
-echo "$ZEN_SAFEBROWSING_API_KEY" > ~/.zen-keys/safebrowsing.dat
-echo "$ZEN_MOZILLA_API_KEY" > ~/.zen-keys/mozilla.dat
-echo "$ZEN_GOOGLE_LOCATION_SERVICE_API_KEY" > ~/.zen-keys/google_location_service.dat
+echo "${ZEN_SAFEBROWSING_API_KEY:-dummy-safebrowsing-key}" > ~/.zen-keys/safebrowsing.dat
+echo "${ZEN_MOZILLA_API_KEY:-dummy-mozilla-key}" > ~/.zen-keys/mozilla.dat
+echo "${ZEN_GOOGLE_LOCATION_SERVICE_API_KEY:-dummy-google-location-key}" > ~/.zen-keys/google_location_service.dat
 
 . $HOME/.cargo/env
 
