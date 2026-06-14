@@ -220,15 +220,18 @@ jobs:
 
           manifest = Path("src/external-patches/manifest.json")
           text = manifest.read_text()
-          marker = '"name": "Native MacOS popovers"'
-          marker_index = text.index(marker)
-          start = text.rfind("\n  {", 0, marker_index)
-          end = text.find("\n  },", marker_index)
-          if start == -1 or end == -1:
-              raise SystemExit("Could not remove Native MacOS popovers patch entry")
-          manifest.write_text(text[:start] + text[end + len("\n  },"):])
+          for name in ("Native MacOS popovers", "Session store use size hint"):
+              marker = f'"name": "{name}"'
+              marker_index = text.index(marker)
+              start = text.rfind("\n  {", 0, marker_index)
+              end = text.find("\n  },", marker_index)
+              if start == -1 or end == -1:
+                  raise SystemExit(f"Could not remove {name} patch entry")
+              text = text[:start] + text[end + len("\n  },"):]
+          manifest.write_text(text)
           PY
           rm -f src/external-patches/firefox/native_macos_popovers/*.patch
+          rm -f src/external-patches/firefox/session_store_use_size_hint/*.patch
           npm run import -- --verbose
 
       - name: Bootstrap
