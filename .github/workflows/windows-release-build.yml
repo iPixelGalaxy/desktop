@@ -228,6 +228,7 @@ jobs:
               raise SystemExit("Could not remove Native MacOS popovers patch entry")
           manifest.write_text(text[:start] + text[end + len("\n  },"):])
           PY
+          rm -f src/external-patches/firefox/native_macos_popovers/*.patch
           npm run import -- --verbose
 
       - name: Bootstrap
