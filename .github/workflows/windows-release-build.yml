@@ -215,6 +215,19 @@ jobs:
           SURFER_CERT_PATCH_NAME: ${{ secrets.SURFER_CERT_PATCH_NAME }}
         run: |
           . "$HOME/.cargo/env"
+          python3 - <<'PY'
+          from pathlib import Path
+
+          manifest = Path("src/external-patches/manifest.json")
+          text = manifest.read_text()
+          marker = '"name": "Native MacOS popovers"'
+          marker_index = text.index(marker)
+          start = text.rfind("\n  {", 0, marker_index)
+          end = text.find("\n  },", marker_index)
+          if start == -1 or end == -1:
+              raise SystemExit("Could not remove Native MacOS popovers patch entry")
+          manifest.write_text(text[:start] + text[end + len("\n  },"):])
+          PY
           npm run import -- --verbose
 
       - name: Bootstrap
