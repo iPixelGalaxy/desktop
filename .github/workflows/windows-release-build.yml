@@ -231,7 +231,10 @@ jobs:
           text = manifest.read_text()
           for name in ("Native MacOS popovers", "Session store use size hint"):
               marker = f'"name": "{name}"'
-              marker_index = text.index(marker)
+              marker_index = text.find(marker)
+              if marker_index == -1:
+                  print(f"Skipping missing {name} patch entry")
+                  continue
               start = text.rfind("\n  {", 0, marker_index)
               end = text.find("\n  },", marker_index)
               if start == -1 or end == -1:
