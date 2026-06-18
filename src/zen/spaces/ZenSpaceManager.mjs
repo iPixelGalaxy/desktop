@@ -40,6 +40,8 @@ class nsZenWorkspaces {
 
   #canDebug = Services.prefs.getBoolPref("zen.workspaces.debug", false);
   #activeWorkspace = "";
+  #workspaceContainerIdSet = null;
+  #workspaceContainerIdSetSource = null;
 
   _workspaceCache = [];
 
@@ -729,6 +731,7 @@ class nsZenWorkspaces {
     this._workspaceCache = spacesFromStore.length
       ? [...spacesFromStore]
       : [this.#createWorkspaceData("Space", undefined)];
+    this.#invalidateWorkspaceLookupCaches();
     this.activeWorkspace =
       aWinData.activeZenSpace || this._workspaceCache[0].uuid;
     let promise = this.#initializeWorkspaces();
@@ -1214,6 +1217,7 @@ class nsZenWorkspaces {
     } else {
       workspacesData.push(workspaceData);
     }
+    this.#invalidateWorkspaceLookupCaches();
     this.#propagateWorkspaceData();
   }
 
@@ -1338,6 +1342,7 @@ class nsZenWorkspaces {
     }
     return Promise.all(promises).then(() => {
       this._workspaceCache = aWorkspaces;
+      this.#invalidateWorkspaceLookupCaches();
       if (hasChanged) {
         this.#fireSpaceUIUpdate();
       }
@@ -1372,6 +1377,7 @@ class nsZenWorkspaces {
       return;
     }
     workspaces.splice(newPosition, 0, workspace);
+    this.#invalidateWorkspaceLookupCaches();
     // Propagate the changes if the order has changed
     if (currentIndex !== newPosition) {
       this.#propagateWorkspaceData();
@@ -1404,6 +1410,32 @@ class nsZenWorkspaces {
         tab.visible &&
         !tab.pinned
     );
+  }
+
+  #unpinnedTabsInContainer(arrowScrollbox, workspaceID) {
+    const tabs = [];
+    for (const child of arrowScrollbox.children) {
+      if (gBrowser.isTab(child)) {
+        if (
+          child.getAttribute("zen-workspace-id") === workspaceID &&
+          child.visible &&
+          !child.pinned
+        ) {
+          tabs.push(child);
+        }
+      } else if (gBrowser.isTabGroup(child)) {
+        for (const tab of child.tabs) {
+          if (
+            tab.getAttribute("zen-workspace-id") === workspaceID &&
+            tab.visible &&
+            !tab.pinned
+          ) {
+            tabs.push(tab);
+          }
+        }
+      }
+    }
+    return tabs;
   }
 
   #getClosableTabs(tabs) {
@@ -2341,9 +2373,7 @@ class nsZenWorkspaces {
       return (
         !tabContextId ||
         tabContextId === "0" ||
-        !workspaces.some(
-          workspace => workspace.containerTabId === parseInt(tabContextId, 10)
-        )
+        !this.#workspaceHasContainerId(workspaces, parseInt(tabContextId, 10))
       );
     }
 
@@ -2356,6 +2386,26 @@ class nsZenWorkspaces {
 
     // Show if tab belongs to current workspace
     return tabWorkspaceId === workspaceUuid;
+  }
+
+  #workspaceHasContainerId(workspaces, containerId) {
+    if (!containerId) {
+      return false;
+    }
+    if (workspaces !== this.#workspaceContainerIdSetSource) {
+      this.#workspaceContainerIdSetSource = workspaces;
+      this.#workspaceContainerIdSet = new Set(
+        (workspaces || [])
+          .map(workspace => workspace.containerTabId)
+          .filter(Boolean)
+      );
+    }
+    return this.#workspaceContainerIdSet.has(containerId);
+  }
+
+  #invalidateWorkspaceLookupCaches() {
+    this.#workspaceContainerIdSet = null;
+    this.#workspaceContainerIdSetSource = null;
   }
 
   async _handleTabSelection(workspace, onInit, previousWorkspaceId) {
@@ -2674,7 +2724,7 @@ class nsZenWorkspaces {
     pinnedContainer,
     fromTabSelection = false
   ) {
-    const visibleTabsFound = () => {
+    const hasVisibleTabs = () => {
       let count = 0;
       for (const child of arrowScrollbox.children) {
         if (
@@ -2695,12 +2745,12 @@ class nsZenWorkspaces {
     // <= 2 because we have the empty tab and the new tab button
     const shouldHideSeparator = fromTabSelection
       ? pinnedContainer.hasAttribute("hide-separator")
-      : !visibleTabsFound();
+      : !hasVisibleTabs();
     if (shouldHideSeparator) {
       pinnedContainer.setAttribute("hide-separator", "true");
     } else {
       const workspaceID = pinnedContainer.getAttribute("zen-workspace-id");
-      const tabs = this.#unpinnedTabsInWorkspace(workspaceID);
+      const tabs = this.#unpinnedTabsInContainer(arrowScrollbox, workspaceID);
       const closableTabs = this.#getClosableTabs(tabs);
       const button = pinnedContainer.querySelector(
         ".zen-workspace-close-unpinned-tabs-button"
@@ -3110,27 +3160,34 @@ class nsZenWorkspaces {
     }
 
     const tabs = [];
-    // we need to go through each tab in each container
-    const essentialsContainer = document.querySelectorAll(
-      "#zen-essentials .zen-workspace-tabs-section"
-    );
-    let pinnedContainers = [];
-    let normalContainers = [];
+    const containers = [];
+    const pinnedContainers = [];
+    const normalContainers = [];
     if (!this._hasInitializedTabsStrip) {
-      pinnedContainers = [document.getElementById("pinned-tabs-container")];
-      normalContainers = [this.activeWorkspaceStrip];
+      pinnedContainers.push(document.getElementById("pinned-tabs-container"));
+      normalContainers.push(this.activeWorkspaceStrip);
     } else {
-      let workspaces = Array.from(this._workspaceCache || []);
-      // Make the active workspace first
-      workspaces = workspaces.sort((a, b) =>
-        /* eslint-disable no-nested-ternary */
-        a.uuid === this.activeWorkspace
-          ? -1
-          : b.uuid === this.activeWorkspace
-            ? 1
-            : 0
-      );
-      for (const workspace of workspaces) {
+      const activeWorkspace = this.activeWorkspace;
+      for (const essentialSection of document.querySelectorAll(
+        "#zen-essentials .zen-workspace-tabs-section"
+      )) {
+        containers.push(essentialSection);
+      }
+      for (const workspace of this._workspaceCache || []) {
+        if (workspace.uuid !== activeWorkspace) {
+          continue;
+        }
+        const container = this.workspaceElement(workspace.uuid);
+        if (container) {
+          pinnedContainers.push(container.pinnedTabsContainer);
+          normalContainers.push(container.tabsContainer);
+        }
+        break;
+      }
+      for (const workspace of this._workspaceCache || []) {
+        if (workspace.uuid === activeWorkspace) {
+          continue;
+        }
         const container = this.workspaceElement(workspace.uuid);
         if (container) {
           pinnedContainers.push(container.pinnedTabsContainer);
@@ -3138,13 +3195,9 @@ class nsZenWorkspaces {
         }
       }
     }
-    const containers = [
-      ...essentialsContainer,
-      ...pinnedContainers,
-      ...normalContainers,
-    ];
+    containers.push(...pinnedContainers, ...normalContainers);
     for (const container of containers) {
-      if (container.hasAttribute("cloned")) {
+      if (!container || container.hasAttribute("cloned")) {
         continue;
       }
       for (const tab of container.children) {

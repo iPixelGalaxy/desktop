@@ -1484,11 +1484,13 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
     );
 
     if (selectedTabs.length) {
+      const selectedTabsSet = new Set(selectedTabs);
+      const itemsToHideSet = new Set();
       for (let i = 0; i < groupItems.length; i++) {
         const { item, splitViewId, activeFolderId } = groupItems[i];
 
         // Skip selected items
-        if (selectedTabs.includes(item)) {
+        if (selectedTabsSet.has(item)) {
           continue;
         }
 
@@ -1509,7 +1511,8 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
           }
         }
 
-        if (!itemsToHide.includes(item)) {
+        if (!itemsToHideSet.has(item)) {
+          itemsToHideSet.add(item);
           itemsToHide.push(item);
         }
       }
@@ -1583,11 +1586,13 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
       });
 
       if (selectedTabs.length) {
+        const selectedTabsSet = new Set(selectedTabs);
+        const itemsToHideSet = new Set(itemsToHide);
         for (let i = 0; i < activeFolderItems.length; i++) {
           const { item, splitViewId, activeFolderId } = activeFolderItems[i];
 
           // Skip selected items
-          if (selectedTabs.includes(item)) {
+          if (selectedTabsSet.has(item)) {
             continue;
           }
 
@@ -1607,7 +1612,8 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
             }
           }
 
-          if (!itemsToHide.includes(item)) {
+          if (!itemsToHideSet.has(item)) {
+            itemsToHideSet.add(item);
             itemsToHide.push(item);
           }
         }
@@ -1896,6 +1902,8 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
 
     const itemsToShow = [];
     if (selectedTabs.length) {
+      const selectedTabsSet = new Set(selectedTabs);
+      const itemsToHideSet = new Set(itemsToHide);
       for (let i = 0; i < groupItems.length; i++) {
         const { item, splitViewId } = groupItems[i];
 
@@ -1905,7 +1913,7 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
         }
 
         // Skip selected items
-        if (selectedTabs.includes(item)) {
+        if (selectedTabsSet.has(item)) {
           continue;
         }
 
@@ -1914,7 +1922,8 @@ class nsZenFolders extends nsZenDOMOperatedFeature {
           continue;
         }
 
-        if (!itemVisible && !itemsToHide.includes(item)) {
+        if (!itemVisible && !itemsToHideSet.has(item)) {
+          itemsToHideSet.add(item);
           itemsToHide.push(item);
         }
       }

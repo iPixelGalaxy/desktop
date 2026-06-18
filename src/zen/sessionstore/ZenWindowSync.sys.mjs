@@ -290,24 +290,19 @@ class nsZenWindowSync {
       const { gZenWorkspaces } = aWindow;
       this.#onWindowBeforeShow(aWindow);
       await gZenWorkspaces.promiseInitialized;
+      const pinnedStatePromises = [];
       for (let tab of gZenWorkspaces.allStoredTabs) {
         if (!tab.id) {
           tab.id = this.#newTabSyncId;
         }
         if (tab.pinned && !tab._zenPinnedInitialState) {
-          await this.setPinnedTabState(tab);
-        }
-        // Lets clear extra values to save some memory, we only really
-        // care about the URL and title for the initial state, and we want
-        // to avoid keeping the whole session history around.
-        if (tab._zenPinnedInitialState) {
-          tab._zenPinnedInitialState = {
-            ...tab._zenPinnedInitialState,
-            entry: {
-              url: tab._zenPinnedInitialState.entry.url,
-              title: tab._zenPinnedInitialState.entry.title,
-            },
-          };
+          pinnedStatePromises.push(
+            this.setPinnedTabState(tab).then(() =>
+              this.#trimPinnedInitialState(tab)
+            )
+          );
+        } else {
+          this.#trimPinnedInitialState(tab);
         }
         if (
           !lazy.gWindowSyncEnabled ||
@@ -316,7 +311,23 @@ class nsZenWindowSync {
           tab._zenContentsVisible = true;
         }
       }
+      await Promise.all(pinnedStatePromises);
     });
+  }
+
+  #trimPinnedInitialState(tab) {
+    // Keep only the data used to restore/reset pinned tabs. Avoid retaining
+    // complete session history entries in memory after startup.
+    if (!tab._zenPinnedInitialState) {
+      return;
+    }
+    tab._zenPinnedInitialState = {
+      ...tab._zenPinnedInitialState,
+      entry: {
+        url: tab._zenPinnedInitialState.entry.url,
+        title: tab._zenPinnedInitialState.entry.title,
+      },
+    };
   }
 
   /**
