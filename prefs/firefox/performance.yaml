@@ -4,7 +4,6 @@
 
 - name: browser.lowMemoryResponseMask
   value: 3
-  condition: "defined(XP_MACOSX)"
 
 - name: network.predictor.enable-hover-on-ssl
   value: true

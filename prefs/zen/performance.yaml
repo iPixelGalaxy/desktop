@@ -1,0 +1,35 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+- name: zen.tab-unloader.auto-enabled
+  value: true
+  hidden: true
+
+- name: zen.tab-unloader.timeout-minutes
+  value: 10
+  hidden: true
+
+- name: zen.tab-unloader.scan-interval-seconds
+  value: 60
+  hidden: true
+
+- name: zen.tab-unloader.load-stall-seconds
+  value: 30
+  hidden: true
+
+- name: zen.tab-unloader.min-loaded-tabs-before-pressure
+  value: 8
+  hidden: true
+
+- name: zen.tab-unloader.max-unloads-per-cycle
+  value: 3
+  hidden: true
+
+- name: zen.tab-unloader.max-emergency-unloads-per-cycle
+  value: 8
+  hidden: true
+
+- name: zen.tab-unloader.log
+  value: false
+  hidden: true

@@ -270,8 +270,9 @@ window.gZenUIManager = {
       "zen-has-hover"
     );
     gZenVerticalTabsManager.recalculateURLBarHeight(true);
-    if (!this._preventToolbarRebuild) {
-      setTimeout(() => {
+    if (!this._preventToolbarRebuild && !this._tabsToolbarRebuildTimer) {
+      this._tabsToolbarRebuildTimer = setTimeout(() => {
+        delete this._tabsToolbarRebuildTimer;
         gZenWorkspaces.updateTabsContainers();
       }, 0);
     }

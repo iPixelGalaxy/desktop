@@ -91,6 +91,10 @@ class ZenStartup {
       // A bit of a hack to make sure the tabs toolbar is updated.
       // Just in case we didn't get the right size.
       gZenUIManager.updateTabsToolbar();
+      const { ZenMemoryPressureManager } = ChromeUtils.importESModule(
+        "resource:///modules/zen/ZenMemoryPressureManager.sys.mjs"
+      );
+      ZenMemoryPressureManager.init(window);
       this.closeWatermark();
       document
         .getElementById("tabbrowser-arrowscrollbox")

@@ -30,4 +30,6 @@ support-files = [
 
 ["browser_unload_all_other_spaces.js"]
 
+["browser_zen_memory_pressure_manager.js"]
+
 ["browser_workspace_bookmarks.js"]
