@@ -50,6 +50,20 @@
   value: 6
   condition: "defined(MOZILLA_OFFICIAL)"
 
+# Local experiment builds from this branch should not contact the official Zen
+# update service or offer official builds over this checkout.
+- name: app.update.disabledForTesting
+  value: true
+
+- name: app.update.auto
+  value: false
+
+- name: app.update.background.enabled
+  value: false
+
+- name: app.update.service.enabled
+  value: false
+
 - name: browser.profiles.enabled
   value: false
 
