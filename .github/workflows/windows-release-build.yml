@@ -14,6 +14,26 @@ on:
         description: "The version to build"
         required: true
         type: string
+      firefox-channel:
+        description: "Firefox channel to bundle"
+        required: false
+        type: string
+        default: "stable"
+      firefox-version:
+        description: "Exact Firefox version to bundle when not using latest"
+        required: false
+        type: string
+        default: "152.0.1"
+      use-latest-firefox:
+        description: "Use latest version for the selected Firefox channel"
+        required: false
+        type: boolean
+        default: false
+      check-patches:
+        description: "Dry-run all patches before import"
+        required: false
+        type: boolean
+        default: false
       profile-data-path-archive:
         description: "The path to the zip archive containing the profile data"
         type: string
@@ -101,12 +121,26 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3 python3-pip dos2unix yasm nasm build-essential libgtk2.0-dev libpython3-dev m4 uuid libasound2-dev libcurl4-openssl-dev libdbus-1-dev libdrm-dev libdbus-glib-1-dev libgtk-3-dev libpulse-dev libx11-xcb-dev libxt-dev xvfb lld llvm zip --fix-missing
 
+      - name: Select Firefox base
+        if: ${{ !(inputs.generate-gpo && matrix.arch == 'aarch64') }}
+        run: |
+          set -x
+          if test "${{ inputs.use-latest-firefox }}" = "true"; then
+            npm run firefox:channel -- "${{ inputs.firefox-channel }}" --latest
+          else
+            npm run firefox:channel -- "${{ inputs.firefox-channel }}" --version "${{ inputs.firefox-version }}"
+          fi
+
       - name: Load Surfer CI setup
         run: npm run surfer -- ci --brand ${{ inputs.release-branch }} --display-version ${{ inputs.build-version }}
 
       - name: Download Firefox and dependencies
         if: ${{ !(inputs.generate-gpo && matrix.arch == 'aarch64') }}
         run: npm run download
+
+      - name: Check patches
+        if: ${{ inputs.check-patches && !(inputs.generate-gpo && matrix.arch == 'aarch64') }}
+        run: npm run patches:check
 
       - name: win-cross Cache
         env:
