@@ -1,5 +1,5 @@
 diff --git a/layout/svg/SVGImageContext.h b/layout/svg/SVGImageContext.h
-index 159d9cbbd0711076ee6c2a71a3da04bd92a0102c..daefc40590c4d7d7fac9db25c6ec4ba2424dded5 100644
+index b1f8119..8fbe8ab 100644
 --- a/layout/svg/SVGImageContext.h
 +++ b/layout/svg/SVGImageContext.h
 @@ -6,6 +6,7 @@
@@ -44,37 +44,34 @@ index 159d9cbbd0711076ee6c2a71a3da04bd92a0102c..daefc40590c4d7d7fac9db25c6ec4ba2
    const Maybe<SVGPreserveAspectRatio>& GetPreserveAspectRatio() const {
      return mPreserveAspectRatio;
    }
-@@ -107,7 +128,11 @@ class SVGImageContext {
- 
+@@ -116,6 +137,10 @@ class SVGImageContext {
      return contextPaintIsEqual && mViewportSize == aOther.mViewportSize &&
             mPreserveAspectRatio == aOther.mPreserveAspectRatio &&
--           mColorScheme == aOther.mColorScheme;
-+           mColorScheme == aOther.mColorScheme &&
+            mColorScheme == aOther.mColorScheme &&
 +           mZenBoostsAccent == aOther.mZenBoostsAccent &&
 +           mZenBoostsComplementaryRotation ==
 +               aOther.mZenBoostsComplementaryRotation &&
-+           mZenBoostsInverted == aOther.mZenBoostsInverted;
++           mZenBoostsInverted == aOther.mZenBoostsInverted &&
+            mLinkParameters == aOther.mLinkParameters;
    }
  
-   bool operator!=(const SVGImageContext&) const = default;
-@@ -119,7 +144,9 @@ class SVGImageContext {
-     }
+@@ -129,7 +154,8 @@ class SVGImageContext {
      return HashGeneric(hash, mViewportSize.map(HashSize).valueOr(0),
                         mPreserveAspectRatio.map(HashPAR).valueOr(0),
--                       mColorScheme.map(HashColorScheme).valueOr(0));
-+                       mColorScheme.map(HashColorScheme).valueOr(0),
+                        mColorScheme.map(HashColorScheme).valueOr(0),
+-                       HashLinkParameters(mLinkParameters));
 +                       mZenBoostsAccent, mZenBoostsComplementaryRotation,
-+                       mZenBoostsInverted);
++                       mZenBoostsInverted, HashLinkParameters(mLinkParameters));
    }
  
   private:
-@@ -138,6 +165,9 @@ class SVGImageContext {
-   Maybe<CSSIntSize> mViewportSize;
-   Maybe<SVGPreserveAspectRatio> mPreserveAspectRatio;
-   Maybe<ColorScheme> mColorScheme;
+@@ -138,6 +164,9 @@ class SVGImageContext {
+   }
+   static PLDHashNumber HashPAR(const SVGPreserveAspectRatio& aPAR) {
+     return aPAR.Hash();
 +  nscolor mZenBoostsAccent = 0;
 +  float mZenBoostsComplementaryRotation = 0.0f;
 +  bool mZenBoostsInverted = false;
- };
- 
- }  // namespace mozilla
+   }
+   static PLDHashNumber HashColorScheme(ColorScheme aScheme) {
+     return HashGeneric(uint8_t(aScheme));
