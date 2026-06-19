@@ -54,15 +54,19 @@
 # update service or offer official builds over this checkout.
 - name: app.update.disabledForTesting
   value: true
+  locked: true
 
 - name: app.update.auto
   value: false
+  locked: true
 
 - name: app.update.background.enabled
   value: false
+  locked: true
 
 - name: app.update.service.enabled
   value: false
+  locked: true
 
 - name: browser.profiles.enabled
   value: false

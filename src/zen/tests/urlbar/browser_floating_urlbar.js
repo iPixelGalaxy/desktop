@@ -11,7 +11,7 @@ add_task(async function test_Floating_Urlbar() {
   gURLBar.blur();
 
   await SimpleTest.promiseFocus(window);
-  document.getElementById("Browser:OpenLocation").doCommand();
+  openLocation();
   await UrlbarTestUtils.promiseAutocompleteResultPopup({
     window,
     waitForFocus: SimpleTest.waitForFocus,
@@ -46,7 +46,7 @@ add_task(async function test_Floating_Highlight_Everything() {
 
   await SimpleTest.promiseFocus(window);
   await selectWithMouseDrag(2, 5);
-  document.getElementById("Browser:OpenLocation").doCommand();
+  openLocation();
 
   // Selection range
   Assert.equal(gURLBar.selectionStart, 0, "Selection start should be 0");
