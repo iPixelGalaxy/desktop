@@ -1,4 +1,5 @@
 name: Windows x64 Release Build
+run-name: Windows x64 ${{ inputs.build-version }} (Firefox ${{ inputs.firefox-version }})
 
 permissions:
   contents: read

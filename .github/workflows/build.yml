@@ -1,4 +1,5 @@
 name: Zen Release builds
+run-name: Zen ${{ inputs.update_branch }} release build
 
 on:
   workflow_dispatch:
