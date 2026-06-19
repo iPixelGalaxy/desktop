@@ -78,12 +78,6 @@ jobs:
       CARGO_BUILD_JOBS: 12
       MOZ_MAKE_FLAGS: -j12
       MAKEFLAGS: -j12
-      # Self-hosted /tmp is a 16 GiB tmpfs. Use the runner's disk-backed temp
-      # directory so npm native dependency installs and build staging do not
-      # exhaust tmpfs.
-      TMPDIR: ${{ runner.temp }}
-      TMP: ${{ runner.temp }}
-      TEMP: ${{ runner.temp }}
     strategy:
       fail-fast: false
       matrix:
@@ -107,6 +101,15 @@ jobs:
         uses: useblacksmith/setup-node@v5
         with:
           node-version-file: ".nvmrc"
+
+      - name: Use runner temp directory
+        run: |
+          # Self-hosted /tmp is a 16 GiB tmpfs. Keep npm and build staging on
+          # the runner's disk-backed temp directory instead.
+          mkdir -p "$RUNNER_TEMP"
+          echo "TMPDIR=$RUNNER_TEMP" >> "$GITHUB_ENV"
+          echo "TMP=$RUNNER_TEMP" >> "$GITHUB_ENV"
+          echo "TEMP=$RUNNER_TEMP" >> "$GITHUB_ENV"
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@main
