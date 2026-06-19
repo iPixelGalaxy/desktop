@@ -13,7 +13,6 @@ PRODUCT_DETAILS_URL = "https://product-details.mozilla.org/1.0/firefox_versions.
 VERSION_KEYS = {
   "stable": "LATEST_FIREFOX_VERSION",
   "beta": "LATEST_FIREFOX_DEVEL_VERSION",
-  "nightly": "FIREFOX_NIGHTLY",
 }
 
 
@@ -46,14 +45,14 @@ def update_surfer_json(path, channel, version, candidate_build):
 def main():
   parser = argparse.ArgumentParser(
       description="Select the Firefox base version used by surfer.")
-  parser.add_argument("channel", choices=sorted(VERSION_KEYS))
+  parser.add_argument("channel", choices=["beta", "nightly", "stable"])
   parser.add_argument(
       "--version",
-      help="Exact Firefox version to pin, for example 152.0.1, 153.0b9, or 154.0a1.")
+      help="Exact Firefox release/beta version to pin, for example 152.0.1 or 153.0b9.")
   parser.add_argument(
       "--latest",
       action="store_true",
-      help="Fetch the latest version for the selected channel from Mozilla product details.")
+      help="Fetch the latest version for the selected release channel from Mozilla product details.")
   parser.add_argument(
       "--candidate-build",
       type=int,
@@ -68,6 +67,11 @@ def main():
 
   if args.latest == bool(args.version):
     parser.error("Provide exactly one of --version or --latest.")
+  if args.channel == "nightly":
+    parser.error(
+        "nightly cannot be downloaded through Surfer's Firefox release downloader. "
+        "Nightly builds require a separate mozilla-central source checkout flow; "
+        "use stable or beta for this workflow.")
 
   version = latest_version_for(args.channel) if args.latest else args.version
   update_surfer_json(args.surfer_json, args.channel, version, args.candidate_build)

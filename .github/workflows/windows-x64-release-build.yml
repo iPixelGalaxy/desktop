@@ -12,14 +12,13 @@ on:
         type: string
         default: "1.21.3b"
       firefox-channel:
-        description: "Firefox channel to bundle"
+        description: "Firefox release channel to bundle; Nightly currently fails early because Surfer cannot download a1 release artifacts"
         required: true
         type: choice
         default: "stable"
         options:
           - stable
           - beta
-          - nightly
       firefox-version:
         description: "Exact Firefox version to bundle when not using latest"
         required: true

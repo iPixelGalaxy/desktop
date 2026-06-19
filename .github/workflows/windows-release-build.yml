@@ -15,7 +15,7 @@ on:
         required: true
         type: string
       firefox-channel:
-        description: "Firefox channel to bundle"
+        description: "Firefox release channel to bundle; Nightly currently fails early because Surfer cannot download a1 release artifacts"
         required: false
         type: string
         default: "stable"

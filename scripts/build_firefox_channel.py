@@ -19,11 +19,11 @@ def main():
   parser = argparse.ArgumentParser(
       description="Select a Firefox channel/version, import Zen patches, and optionally build.")
   parser.add_argument("channel", choices=["beta", "nightly", "stable"])
-  parser.add_argument("--version", help="Exact Firefox version to pin, for example 154.0a1.")
+  parser.add_argument("--version", help="Exact Firefox release/beta version to pin, for example 152.0.1 or 153.0b9.")
   parser.add_argument(
       "--latest",
       action="store_true",
-      help="Fetch the latest version for the selected channel from Mozilla product details.")
+      help="Fetch the latest version for the selected release channel from Mozilla product details.")
   parser.add_argument("--candidate-build", type=int, default=1)
   parser.add_argument(
       "--display-version",
