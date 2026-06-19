@@ -14,6 +14,7 @@
 #include "mozilla/ClearOnShutdown.h"
 #include "mozilla/GlobalStyleSheetCache.h"
 #include "mozilla/RefPtr.h"
+#include "mozilla/ServoStyleConsts.h"
 #include "mozilla/StyleSheet.h"
 
 #define GET_MODS_FILE(chromeFile, err)                                        \
