@@ -55,6 +55,7 @@ def check_patches_independently(engine, root, patches, verbose):
   for patch in patches:
     checked += 1
     relative_patch = patch.relative_to(root)
+    print(f"[CHECK {checked}/{len(patches)}] {relative_patch}", flush=True)
     result = check_patch(engine, patch, verbose)
     if result.returncode == 0:
       if verbose and result.stdout.strip():
@@ -101,6 +102,7 @@ def check_patches_sequentially(engine, root, patches, verbose, keep_going):
     for patch in patches:
       checked += 1
       relative_patch = patch.relative_to(root)
+      print(f"[CHECK {checked}/{len(patches)}] {relative_patch}", flush=True)
       check_result = run_command(
           git_apply_command(engine, patch, verbose, check=True, cached=True), env)
       if check_result.returncode != 0:

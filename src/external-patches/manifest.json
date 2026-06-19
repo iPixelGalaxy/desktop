@@ -34,10 +34,5 @@
       // the parameter's help description with the correct one.
       "application": "Application"
     }
-  },
-  {
-    "type": "phabricator",
-    "id": "D291714",
-    "name": "gh-12979 Clip dirty_rect to device_size"
   }
 ]
