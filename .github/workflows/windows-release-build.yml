@@ -34,6 +34,11 @@ on:
         required: false
         type: boolean
         default: true
+      keep-going-patch-checks:
+        description: "Continue patch checks after failures to report all conflicts"
+        required: false
+        type: boolean
+        default: true
       profile-data-path-archive:
         description: "The path to the zip archive containing the profile data"
         type: string
@@ -140,7 +145,12 @@ jobs:
 
       - name: Check patches
         if: ${{ inputs.check-patches && !(inputs.generate-gpo && matrix.arch == 'aarch64') }}
-        run: npm run patches:check
+        run: |
+          if test "${{ inputs.keep-going-patch-checks }}" = "true"; then
+            npm run patches:check -- --keep-going
+          else
+            npm run patches:check
+          fi
 
       - name: win-cross Cache
         env:

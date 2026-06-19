@@ -34,6 +34,11 @@ on:
         required: true
         type: boolean
         default: true
+      keep-going-patch-checks:
+        description: "Continue patch checks after failures to report all conflicts"
+        required: true
+        type: boolean
+        default: true
       release-branch:
         description: "The release brand to build"
         required: true
@@ -73,6 +78,7 @@ jobs:
       firefox-version: ${{ inputs.firefox-version }}
       use-latest-firefox: ${{ inputs.use-latest-firefox }}
       check-patches: ${{ inputs.check-patches }}
+      keep-going-patch-checks: ${{ inputs.keep-going-patch-checks }}
       generate-gpo: false
       release-branch: ${{ inputs.release-branch }}
       MOZ_BUILD_DATE: ${{ needs.buildid.outputs.buildid }}
