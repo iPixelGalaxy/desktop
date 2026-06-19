@@ -1,4 +1,5 @@
 name: Windows x64 Release Build
+run-name: Windows x64 ${{ inputs.build-version }} (Firefox ${{ inputs.firefox-version }})
 
 permissions:
   contents: read
@@ -10,7 +11,31 @@ on:
         description: "The display version to build"
         required: true
         type: string
-        default: "1.21.1b"
+        default: "1.21.3b"
+      firefox-channel:
+        description: "Firefox channel to bundle"
+        required: true
+        type: choice
+        default: "stable"
+        options:
+          - stable
+          - beta
+          - nightly
+      firefox-version:
+        description: "Exact Firefox version to bundle when not using latest"
+        required: true
+        type: string
+        default: "152.0.1"
+      use-latest-firefox:
+        description: "Use latest version for the selected Firefox channel"
+        required: true
+        type: boolean
+        default: false
+      check-patches:
+        description: "Dry-run all patches before import"
+        required: true
+        type: boolean
+        default: false
       release-branch:
         description: "The release brand to build"
         required: true
@@ -46,6 +71,10 @@ jobs:
     with:
       arch: x86_64
       build-version: ${{ inputs.build-version }}
+      firefox-channel: ${{ inputs.firefox-channel }}
+      firefox-version: ${{ inputs.firefox-version }}
+      use-latest-firefox: ${{ inputs.use-latest-firefox }}
+      check-patches: ${{ inputs.check-patches }}
       generate-gpo: false
       release-branch: ${{ inputs.release-branch }}
       MOZ_BUILD_DATE: ${{ needs.buildid.outputs.buildid }}
