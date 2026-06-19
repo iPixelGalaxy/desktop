@@ -21,7 +21,6 @@ fi
 mkdir -p ~/.zen-keys
 echo "${ZEN_SAFEBROWSING_API_KEY:-dummy-safebrowsing-key}" > ~/.zen-keys/safebrowsing.dat
 echo "${ZEN_MOZILLA_API_KEY:-dummy-mozilla-key}" > ~/.zen-keys/mozilla.dat
-echo "${ZEN_GOOGLE_LOCATION_SERVICE_API_KEY:-dummy-google-location-key}" > ~/.zen-keys/google_location_service.dat
 
 . $HOME/.cargo/env
 

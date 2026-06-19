@@ -129,7 +129,6 @@ jobs:
           ZEN_GA_GENERATE_PROFILE: 1
           ZEN_SAFEBROWSING_API_KEY: ${{ secrets.ZEN_SAFEBROWSING_API_KEY }}
           ZEN_MOZILLA_API_KEY: ${{ secrets.ZEN_MOZILLA_API_KEY }}
-          ZEN_GOOGLE_LOCATION_SERVICE_API_KEY: ${{ secrets.ZEN_GOOGLE_LOCATION_SERVICE_API_KEY }}
         continue-on-error: true
         run: |
           export SURFER_PLATFORM="linux"
@@ -159,7 +158,6 @@ jobs:
           ZEN_RELEASE_BRANCH: ${{ inputs.release-branch }}
           ZEN_SAFEBROWSING_API_KEY: ${{ secrets.ZEN_SAFEBROWSING_API_KEY }}
           ZEN_MOZILLA_API_KEY: ${{ secrets.ZEN_MOZILLA_API_KEY }}
-          ZEN_GOOGLE_LOCATION_SERVICE_API_KEY: ${{ secrets.ZEN_GOOGLE_LOCATION_SERVICE_API_KEY }}
         continue-on-error: true
         run: |
           export SURFER_PLATFORM="linux"
