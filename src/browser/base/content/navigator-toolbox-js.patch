@@ -37,12 +37,13 @@ index 1982ebadbd2df5ea309db487a4f30288f1af43e5..926c681d4733c84768a23407d60ca058
          case "back-button":
          case "forward-button":
          case "reload-button":
-@@ -329,6 +341,7 @@ document.addEventListener(
+@@ -329,7 +341,8 @@ document.addEventListener(
          #downloads-button,
          #fxa-toolbar-menu-button,
          #unified-extensions-button,
 +        #zen-site-data-icon-button,
          #library-button,
+         #ipprotection-button,
          #split-view-button,
          #smartwindow-ask-button
 @@ -413,6 +426,16 @@ document.addEventListener(
