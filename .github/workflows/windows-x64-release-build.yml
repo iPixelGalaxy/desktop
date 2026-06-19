@@ -16,7 +16,7 @@ on:
         description: "Firefox release channel to bundle; Nightly currently fails early because Surfer cannot download a1 release artifacts"
         required: true
         type: choice
-        default: "beta"
+        default: "stable"
         options:
           - stable
           - beta
@@ -29,12 +29,12 @@ on:
         description: "Use latest version for the selected Firefox channel"
         required: true
         type: boolean
-        default: true
+        default: false
       check-patches:
         description: "Dry-run all patches before import"
         required: true
         type: boolean
-        default: true
+        default: false
       keep-going-patch-checks:
         description: "Continue patch checks after failures to report all conflicts"
         required: true
