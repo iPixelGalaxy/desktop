@@ -11,12 +11,3 @@ index 3c9fecf731126fdbf900d1bdcd3635dd31ed53ef..c3a210b8153e9699c6cbdc0d568bb724
        {
          ignore: ["blockless-at-rules"],
        },
-@@ -274,7 +274,7 @@ module.exports = {
-     // Remove this line setting `csscontrols/use-logical` to null after implementing fixes
-     "csstools/use-logical": null,
-     "stylelint-plugin-mozilla/no-base-design-tokens": true,
--    "stylelint-plugin-mozilla/use-design-tokens": true,
-+    "stylelint-plugin-mozilla/use-design-tokens": false,
-   },
- 
-   overrides: [
