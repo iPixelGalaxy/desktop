@@ -18,7 +18,7 @@ on:
         description: "Firefox release channel to bundle; Nightly currently fails early because Surfer cannot download a1 release artifacts"
         required: false
         type: string
-        default: "stable"
+        default: "beta"
       firefox-version:
         description: "Exact Firefox version to bundle when not using latest"
         required: false
@@ -28,12 +28,12 @@ on:
         description: "Use latest version for the selected Firefox channel"
         required: false
         type: boolean
-        default: false
+        default: true
       check-patches:
         description: "Dry-run all patches before import"
         required: false
         type: boolean
-        default: false
+        default: true
       profile-data-path-archive:
         description: "The path to the zip archive containing the profile data"
         type: string
