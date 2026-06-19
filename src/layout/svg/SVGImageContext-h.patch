@@ -1,5 +1,5 @@
 diff --git a/layout/svg/SVGImageContext.h b/layout/svg/SVGImageContext.h
-index b1f8119..8fbe8ab 100644
+index b1f8119..b57c8ca 100644
 --- a/layout/svg/SVGImageContext.h
 +++ b/layout/svg/SVGImageContext.h
 @@ -6,6 +6,7 @@
@@ -65,13 +65,14 @@ index b1f8119..8fbe8ab 100644
    }
  
   private:
-@@ -138,6 +164,9 @@ class SVGImageContext {
-   }
-   static PLDHashNumber HashPAR(const SVGPreserveAspectRatio& aPAR) {
-     return aPAR.Hash();
+@@ -167,6 +196,10 @@ class SVGImageContext {
+   Maybe<SVGPreserveAspectRatio> mPreserveAspectRatio;
+   Maybe<ColorScheme> mColorScheme;
+   StyleLinkParameters mLinkParameters;
 +  nscolor mZenBoostsAccent = 0;
 +  float mZenBoostsComplementaryRotation = 0.0f;
 +  bool mZenBoostsInverted = false;
-   }
-   static PLDHashNumber HashColorScheme(ColorScheme aScheme) {
-     return HashGeneric(uint8_t(aScheme));
++
+ };
+ 
+ }  // namespace mozilla
