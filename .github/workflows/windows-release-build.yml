@@ -398,6 +398,19 @@ jobs:
               exit 1
               ;;
           esac
+          if test "${{ inputs.generate-gpo }}" != true && test ! -f ./dist/zen.installer.exe; then
+            OBJ_DIR="obj-${{ matrix.arch }}-pc-windows-msvc"
+            INSTALLER_DIR="${OBJ_DIR}/browser/installer/windows"
+            SFX_STUB="other-licenses/7zstub/firefox/7zSD.${{ matrix.arch == 'aarch64' && 'ARM64' || 'Win32' }}.sfx"
+            gmake -C "./engine/${INSTALLER_DIR}" instgen/setup.exe
+            (cd ./engine && PATH="$HOME/.mozbuild/7zz:$PATH" ./mach repackage installer \
+              --tag browser/installer/windows/app.tag \
+              --setupexe "${INSTALLER_DIR}/instgen/setup.exe" \
+              --package ../zen.win64.zip \
+              --package-name zen \
+              --sfx-stub "${SFX_STUB}" \
+              --output ../dist/zen.installer.exe)
+          fi
           ls ./dist
           ls .
 
@@ -422,7 +435,6 @@ jobs:
           INSTALLER_NAME="zen-${VERSION}.en-US.win64.installer.exe"
           echo "INSTALLER_NAME=${INSTALLER_NAME}" >> "$GITHUB_ENV"
           cp ./zen.installer.exe "./${INSTALLER_NAME}"
-          zip "./${INSTALLER_NAME}.zip" "./${INSTALLER_NAME}"
 
       - name: Upload artifact (PGO)
         uses: actions/upload-artifact@v4
@@ -460,8 +472,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 5
-          name: ${{ env.INSTALLER_NAME }}.zip
-          path: ./zen-*.en-US.win64.installer.exe.zip
+          name: ${{ env.INSTALLER_NAME }}
+          path: ./zen-*.en-US.win64.installer.exe
 
       - name: Upload artifact (if Twilight branch, installer)
         if: ${{ !inputs.standalone-artifact && inputs.release-branch == 'twilight' && !inputs.generate-gpo }}
