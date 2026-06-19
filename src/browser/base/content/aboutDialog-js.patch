@@ -14,16 +14,32 @@ index f6e1391baf12abb91c85a95107bb3923118746c0..cac04aa288e8a305d0c8b28e0c919abc
 @@ -64,7 +64,7 @@ function init() {
    }
  
-   let version = Services.appinfo.version;
+  let version = Services.appinfo.version;
 -  if (/a\d+$/.test(version)) {
 +  if (version.includes("t")) {
      versionIdKey += "-nightly";
      let buildID = Services.appinfo.appBuildID;
      let year = buildID.slice(0, 4);
-@@ -125,14 +125,6 @@ function init() {
+@@ -104,7 +104,10 @@ function init() {
+     }
+   }
+ 
+-  if (AppConstants.MOZ_UPDATER) {
++  if (
++    AppConstants.MOZ_UPDATER &&
++    !Services.prefs.getBoolPref("app.update.disabledForTesting", false)
++  ) {
+     gAppUpdater = new appUpdater({ buttonAutoFocus: true });
+ 
+     let channelLabel = document.getElementById("currentChannelText");
+@@ -125,14 +125,9 @@ function init() {
        window.close();
      });
-   if (AppConstants.MOZ_UPDATER) {
+-  if (AppConstants.MOZ_UPDATER) {
++  if (
++    AppConstants.MOZ_UPDATER &&
++    !Services.prefs.getBoolPref("app.update.disabledForTesting", false)
++  ) {
 -    document
 -      .getElementById("aboutDialogHelpLink")
 -      .addEventListener("click", () => {

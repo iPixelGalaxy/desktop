@@ -579,7 +579,7 @@ window.gZenUIManager = {
     // Open location command
     try {
       gURLBar.search(this._lastSearch || "");
-      document.getElementById("Browser:OpenLocation").doCommand();
+      document.getElementById("Browser:OpenLocation")?.doCommand();
     } catch (e) {
       console.error("Error opening location in new tab:", e);
       this.handleUrlbarClose(false);
