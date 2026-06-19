@@ -137,6 +137,23 @@ def check_patches_sequentially(engine, root, patches, verbose, keep_going):
   return failures, checked
 
 
+def print_compact_failures(failures):
+  print("\n--- BEGIN PATCH ERRORS ---")
+  for patch, output in failures:
+    error_lines = [
+        line.strip() for line in output.splitlines()
+        if line.strip().lower().startswith("error:")
+    ]
+    if not error_lines:
+      nonempty_lines = [line.strip() for line in output.splitlines() if line.strip()]
+      error_lines = nonempty_lines[-1:] or ["error: patch check failed"]
+
+    print(f"[FAIL] {patch}")
+    for line in error_lines:
+      print(line)
+  print("--- END PATCH ERRORS ---")
+
+
 def main():
   parser = argparse.ArgumentParser(
       description="Dry-run all Zen patch files against the local Firefox engine checkout.")
@@ -188,6 +205,7 @@ def main():
     print("\nFailing patches:")
     for patch, _output in failures:
       print(f"- {patch}")
+    print_compact_failures(failures)
     return 1
   return 0
 
