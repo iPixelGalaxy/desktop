@@ -47,7 +47,7 @@ class ZenStyleSheetCache final : public nsISupports {
    * @param aFile The file to load the stylesheet from.
    */
   auto LoadSheetFile(nsIFile* aFile,
-                     mozilla::css::SheetParsingMode aParsingMode) -> void;
+                     mozilla::StyleOrigin aOrigin) -> void;
 
   static mozilla::StaticRefPtr<ZenStyleSheetCache> gZenModsCache;
 

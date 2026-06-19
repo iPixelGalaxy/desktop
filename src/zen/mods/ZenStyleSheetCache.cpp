@@ -12,7 +12,6 @@
 #include "nsStyleSheetService.h"
 
 #include "mozilla/ClearOnShutdown.h"
-#include "mozilla/css/SheetParsingMode.h"
 #include "mozilla/GlobalStyleSheetCache.h"
 #include "mozilla/RefPtr.h"
 
@@ -46,12 +45,12 @@ auto ZenStyleSheetCache::GetModsSheet() -> StyleSheet* {
     }
   }
 
-  LoadSheetFile(chromeFile, css::eUserSheetFeatures);
+  LoadSheetFile(chromeFile, StyleOrigin::User);
   return mModsSheet;
 }
 
 auto ZenStyleSheetCache::LoadSheetFile(nsIFile* aFile,
-                                       css::SheetParsingMode aParsingMode)
+                                       StyleOrigin aOrigin)
     -> void {
   nsCOMPtr<nsIURI> uri;
   NS_NewFileURI(getter_AddRefs(uri), aFile);
@@ -60,7 +59,7 @@ auto ZenStyleSheetCache::LoadSheetFile(nsIFile* aFile,
   }
 
   RefPtr<mozilla::css::Loader> loader = new mozilla::css::Loader;
-  auto result = loader->LoadSheetSync(uri, aParsingMode,
+  auto result = loader->LoadSheetSync(uri, aOrigin,
                                       css::Loader::UseSystemPrincipal::Yes);
   if (MOZ_UNLIKELY(result.isErr())) {
     return;
